@@ -46,9 +46,9 @@ client.on('message', message => {
                 uri: 'http://192.168.0.100:5000/api/v1/Request/movie/',
                 method: 'POST',
                 json: movieData
-            }), function (err, res, body) {
-
+            }), function (err, res, body) {  
             }    
+            message.channel.send("Making request for: " + movie[0].title);
         });
     } else if (primaryCommand  === 'req.tv') {
         if (!args.length) {
