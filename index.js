@@ -22,6 +22,8 @@ client.on('message', message => {
         '\n!req.tv (Show Name)' +
         '\n!check.movie (Movie Title)' +
         '\n!check.tv (Show Name)');
+    } else if (primaryCommand === 'plex.status') {
+        message.channel.send('I am still up and working!');
     } else if (primaryCommand  === 'req.movie') {
         if (!args.length) {
             return message.channel.send('You didn\'t provide a Movie title!');
