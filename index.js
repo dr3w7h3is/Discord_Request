@@ -79,7 +79,7 @@ client.on('message', message => {
         });  
     } else if (primaryCommand  === 'check.tv') {
         if (!args.length) {
-            return message.channel.send('You didn\'t provide a show name!');
+            message.channel.send('You didn\'t provide a show name!');
         }
         args = args.replace("check.tv", "");  
         message.channel.send('Checking for: ' + args); 
