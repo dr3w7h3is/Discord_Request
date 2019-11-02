@@ -16,12 +16,16 @@ client.on('message', message => {
     args = args.replace(str, '');
     
 	if (primaryCommand === 'plex.help') {
-        message.channel.send('Shit dude I\'m fucking lazy nothing works yet, but....' + 
-        '\n!plex.help - Shows Commands' + 
+        return message.channel.send('\n!plex.help - Shows Commands' +
+        '\nFunctional commands at the moment' +
+        '\n---------------------------------' +  
         '\n!req.movie (Movie Title)' + 
-        '\n!req.tv (Show Name)' +
         '\n!check.movie (Movie Title)' +
-        '\n!check.tv (Show Name)');
+        '\n!check.tv (Show Name)' +
+        '\n---------------------------------' +
+        '\nNon-functional commands at the moment' +
+        '\n---------------------------------' +
+        '\n!req.tv (Show Name)');
     } else if (primaryCommand === 'plex.status') {
         message.channel.send('I am still up and working!');
     } else if (primaryCommand  === 'req.movie') {
