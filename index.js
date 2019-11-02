@@ -8,9 +8,9 @@ const ombi = process.env.reqAPI;
 
 client.on('message', message => {
     client.user.setActivity("Being a POS");
-    let fullCommand = message.content.substr(1) // Remove the leading exclamation mark
-    let splitCommand = fullCommand.split(" ") // Split the message up in to pieces for each space
-    let primaryCommand = splitCommand[0] // The first word directly after the exclamation is the command
+    let fullCommand = message.content.substr(1);
+    let splitCommand = fullCommand.split(" ");
+    let primaryCommand = splitCommand[0]; 
     var args = fullCommand;
     var str = '!' + primaryCommand;
     args = args.replace(str, '');
@@ -73,13 +73,15 @@ client.on('message', message => {
             var movie = JSON.parse(body);
             if (movie[0].available){
                 message.channel.send(movie[0].title + " is availble to view on plex");
+            } else if (movie[0].requested) {
+                message.channel.send(movie[0].title + " is unavailable but is already requested");
             } else {
                 message.channel.send(movie[0].title + " is unavailable on plex");
             }      
         });  
     } else if (primaryCommand  === 'check.tv') {
         if (!args.length) {
-            message.channel.send('You didn\'t provide a show name!');
+            return message.channel.send('You didn\'t provide a show name!');
         }
         args = args.replace("check.tv", "");  
         message.channel.send('Checking for: ' + args); 
