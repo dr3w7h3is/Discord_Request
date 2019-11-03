@@ -1,18 +1,20 @@
 const Discord = require('discord.js');
 const request = require('request');
 require('dotenv').config();
-const client = new Discord.Client();
+
 const token = process.env.token;
 const ombi = process.env.reqAPI;
 
-client.on('message', message => {
-    client.user.setActivity("Being a POS");
-    let fullCommand = message.content.substr(1);
-    let splitCommand = fullCommand.split(" ");
-    let primaryCommand = splitCommand[0].toLowerCase(); 
-    var args = fullCommand;
-    var str = primaryCommand;
-    args = args.replace(str, '');
+function main() {
+    var client = new Discord.Client();
+    client.on('message', message => {
+        client.user.setActivity("Being a POS");
+        let fullCommand = message.content.substr(1);
+        let splitCommand = fullCommand.split(" ");
+        let primaryCommand = splitCommand[0].toLowerCase(); 
+        var args = fullCommand;
+        var str = primaryCommand;
+        args = args.replace(str, '');
 
     switch (primaryCommand) {
         case 'plex.help':
@@ -33,9 +35,10 @@ client.on('message', message => {
         case 'check.tv':
             checkTV(message, args);
             break;
-    }
-});
-client.login(token);
+        }
+    });
+    client.login(token);
+}
 
 function reqMovie(message, args) {
     message.channel.send('Checking for: ' + args);
@@ -129,12 +132,15 @@ function checkMovie(message, args) {
                 if (message.author.id == input.author.id) {
                     var choice = input.content - 1;
                     input.channel.send("Looking up your choice: " + movie[choice].title + " (" + movie[choice].releaseDate.substring(0, 4) + ")" );
-                    if (movie[0].available){
-                        input.channel.send(movie[0].title + " is availble to view on plex");
-                    } else if (movie[0].requested) {
-                        input.channel.send(movie[0].title + " is unavailable but is already requested");
+                    if (movie[choice].available){
+                        message.channel.send(movie[choice].title + " is availble to view on plex");
+                        res.destroy();
+                    } else if (movie[choice].requested) {
+                        message.channel.send(movie[choice].title + " is unavailable but is already requested");
+                        res.destroy();
                     } else {
-                        input.channel.send(movie[0].title + " is unavailable on plex");
+                        message.channel.send(movie[choice].title + " is unavailable on plex");
+                        res.destroy();
                     } 
                 }
             })
@@ -172,16 +178,21 @@ function checkTV(message, args) {
                 if (message.author.id == input.author.id) {
                     var choice = input.content - 1;
                     input.channel.send("Looking up your choice: " + show[choice].title + " (" + show[choice].firstAired.substring(0, 4) + ")");
-                    if (show[0].fullyAvailable){
-                        message.channel.send(show[0].title + " is availble to view on plex");
-                    } else if (show[0].partlyAvailable) {
-                        message.channel.send(show[0].title + " has limited episodes on plex");
+                    if (show[choice].fullyAvailable){
+                        message.channel.send(show[choice].title + " is availble to view on plex");
+                        res.destroy();
+                    } else if (show[choice].partlyAvailable) {
+                        message.channel.send(show[choice].title + " has limited episodes on plex");
+                        res.destroy();
                     } else {
-                        message.channel.send(show[0].title + " is unavailable on plex");
+                        message.channel.send(show[choice].title + " is unavailable on plex");
+                        res.destroy();
                     } 
                 }
             })
             res.login(token);
-        }      
+        }
     });
 }
+
+main();
