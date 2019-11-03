@@ -15,22 +15,22 @@ client.on('message', message => {
     args = args.replace(str, '');
 
     switch (primaryCommand) {
-        case 'beta.help':
+        case 'plex.help':
             message.channel.send('help info');
             break;
-        case 'beta.status':
+        case 'plex.status':
             message.channel.send('status info');
             break;
-        case 'beta.r.movie':
+        case 'req.movie':
             reqMovie(message, args);
             break;
-        case 'beta.r.tv':
+        case 'req.tv':
             reqTV(message, args);
             break;
-        case 'beta.c.movie':
+        case 'check.movie':
             checkMovie(message, args);
             break;
-        case 'beta.c.tv':
+        case 'check.tv':
             checkTV(message, args);
             break;
     }
