@@ -21,7 +21,7 @@ function main() {
             message.channel.send('help info');
             break;
         case 'plex.status':
-            message.channel.send('status info');
+            message.channel.send('I\'m up and running!');
             break;
         case 'req.movie':
             reqMovie(message, args);
