@@ -60,8 +60,10 @@ function reqMovie(message, args) {
             uri: 'http://192.168.0.100:5000/api/v1/Request/movie/',
             method: 'POST',
             json: movieData
-        }), function (err, res, body) {}    
-            message.channel.send("Making request for: " + movie[0].title);
+        }), function (err, res, body) {
+            console.log(res);
+        }    
+        message.channel.send("Making request for: " + movie[0].title);
     });
 }
 
@@ -98,12 +100,13 @@ function reqTV(message, args) {
             uri: 'http://192.168.0.100:5000/api/v1/Request/tv/',
             method: 'POST',
             json: showData
-        }), function (err, res, body) {}    
-            message.channel.send("Making request for: " + movie[0].title);
+        })  
+        message.channel.send("Making request for: " + show[0].title);
     });
 }
 
 function checkMovie(message, args) {
+    var MVID = "";
     message.channel.send('Checking for: ' + args);
     request({
         headers: {
@@ -113,43 +116,35 @@ function checkMovie(message, args) {
         method: 'GET'
     }, function (err, res, body) {
         var movie = JSON.parse(body);
-        if (movie.length == 1) {
-            if (movie[0].available){
-                message.channel.send(movie[0].title + " is availble to view on plex");
-            } else if (movie[0].requested) {
-                message.channel.send(movie[0].title + " is unavailable but is already requested");
-            } else {
-                message.channel.send(movie[0].title + " is unavailable on plex");
-            } 
-        } else {
-            message.channel.send("Multiple similar title where found enter the number for the correct movie.");
-            var i;
-            for (i = 0; i < movie.length; i++) {
-                message.channel.send((i + 1) + ") " + movie[i].title + " (" + movie[i].releaseDate.substring(0, 4) + ")");
+        if (movie.length > 1) {
+            message.channel.send("Multiple similar title where found enter the number for the correct show.");
+            var msqQ = [];
+            for (var i=0; i<movie.length; i++) {
+                var line = "";
+                line = (i + 1) + ") " + movie[i].title
+                msqQ.push(line);
             }
+            message.channel.send(msqQ);
             var res = new Discord.Client();
             res.on('message', input => {
                 if (message.author.id == input.author.id) {
                     var choice = input.content - 1;
-                    input.channel.send("Looking up your choice: " + movie[choice].title + " (" + movie[choice].releaseDate.substring(0, 4) + ")" );
-                    if (movie[choice].available){
-                        message.channel.send(movie[choice].title + " is availble to view on plex");
-                        res.destroy();
-                    } else if (movie[choice].requested) {
-                        message.channel.send(movie[choice].title + " is unavailable but is already requested");
-                        res.destroy();
-                    } else {
-                        message.channel.send(movie[choice].title + " is unavailable on plex");
-                        res.destroy();
-                    } 
-                }
-            })
+                    if (MVID != null) {
+                        moviePassID(message, choice, movie);
+                        res.destroy()
+            }}});
             res.login(token);
-        }      
+        } else if (movie.length == 1) {
+            choice = 0;
+            moviePassID(message, choice, movie);
+        } else {
+            message.channel.send("An error has occurred looking up title, please contact Administrator");
+        }     
     });
 }
 
 function checkTV(message, args) {
+    var TVID = "";
     message.channel.send('Checking for: ' + args); 
     request({
         headers: {
@@ -159,40 +154,63 @@ function checkTV(message, args) {
         method: 'GET'
     }, function (err, res, body) {
         var show = JSON.parse(body);
-        if (show.length == 1) {
-            if (show[0].fullyAvailable){
-                message.channel.send(show[0].title + " is availble to view on plex");
-            } else if (show[0].partlyAvailable) {
-                message.channel.send(show[0].title + " has limited episodes on plex");
-            } else {
-                message.channel.send(show[0].title + " is unavailable on plex");
+        if (show.length > 1) {
+            message.channel.send("Multiple similar title where found enter the number for the correct show.");
+            var msqQ = [];
+            for (var i=0; i<show.length; i++) {
+                var line = "";
+                line = (i + 1) + ") " + show[i].title
+                msqQ.push(line);
             }
-        } else {
-            message.channel.send("Multiple similar title where found enter the number for the correct TV show.");
-            var i;
-            for (i = 0; i < show.length; i++) {
-                message.channel.send((i + 1) + ") " + show[i].title + " (" + show[i].firstAired.substring(0, 4) + ")");
-            }
+            message.channel.send(msqQ);
             var res = new Discord.Client();
             res.on('message', input => {
                 if (message.author.id == input.author.id) {
                     var choice = input.content - 1;
-                    input.channel.send("Looking up your choice: " + show[choice].title + " (" + show[choice].firstAired.substring(0, 4) + ")");
-                    if (show[choice].fullyAvailable){
-                        message.channel.send(show[choice].title + " is availble to view on plex");
-                        res.destroy();
-                    } else if (show[choice].partlyAvailable) {
-                        message.channel.send(show[choice].title + " has limited episodes on plex");
-                        res.destroy();
-                    } else {
-                        message.channel.send(show[choice].title + " is unavailable on plex");
-                        res.destroy();
-                    } 
-                }
-            })
+                    TVID = show[choice].id;
+                    if (TVID != null) {
+                        tvPassID(message, TVID);
+                        res.destroy()
+            }}});
             res.login(token);
+        } else if (show.length == 1) {
+            TVID = show[0].id;
+            tvPassID(message, TVID);
+        } else {
+            message.channel.send("An error has occurred looking up title, please contact Administrator");
         }
     });
+}
+
+function tvPassID(message, TVID) {
+    request({
+        headers: {
+            'ApiKey': ombi
+        },
+        uri: 'http://192.168.0.100:5000/api/v1/Search/tv/info/' + TVID,
+        method: 'GET'
+    }, function (err, res, body) {
+        var newShow = JSON.parse(body);
+        if (newShow.fullyAvailable) {
+            message.channel.send("This show is fully available on Plex");
+        } else if (newShow.partlyAvailable) {
+            message.channel.send("This show is on Plex with missing episodes");
+        } else if (!available) {
+            message.channel.send("This show is not currently available on Plex");
+        } else {
+            message.channel.send("An error occured gathering information, please contact Administrator!");
+        }
+    });
+}
+
+function moviePassID(message, choice, movie) {
+    if (movie[choice].available) {
+        message.channel.send("This movie is currently available on Plex");
+    } else if (!movie[choice].available) {
+        message.channel.send("This movie is currently available on Plex");
+    } else {
+        message.channel.send("An error occured gathering information, please contact Administrator!");
+    }
 }
 
 main();
