@@ -46,7 +46,7 @@ function reqMovie(message, args) {
         headers: {
             'ApiKey': ombi
         },
-        uri: 'http://192.168.0.100:5000/api/v1/Search/movie/' + args,
+        uri: 'http://request.franken-tech.com/api/v1/Search/movie/' + args,
         method: 'GET'
     }, function (err, res, body) {
         var movie = JSON.parse(body);
@@ -57,7 +57,7 @@ function reqMovie(message, args) {
             headers: {
                 'ApiKey': ombi
             },
-            uri: 'http://192.168.0.100:5000/api/v1/Request/movie/',
+            uri: 'http://request.franken-tech.com/api/v1/Request/movie/',
             method: 'POST',
             json: movieData
         }), function (err, res, body) {
@@ -73,7 +73,7 @@ function reqTV(message, args) {
         headers: {
             'ApiKey': ombi
         },
-        uri: 'http://192.168.0.100:5000/api/v1/Search/tv/' + args,
+        uri: 'http://request.franken-tech.com/api/v1/Search/tv/' + args,
         method: 'GET'
     }, function (err, res, body) {
         var show = JSON.parse(body);
@@ -97,7 +97,7 @@ function reqTV(message, args) {
             headers: {
                 'ApiKey': ombi
             },
-            uri: 'http://192.168.0.100:5000/api/v1/Request/tv/',
+            uri: 'http://request.franken-tech.com/api/v1/Request/tv/',
             method: 'POST',
             json: showData
         })  
@@ -112,7 +112,7 @@ function checkMovie(message, args) {
         headers: {
             'ApiKey': ombi
         },
-        uri: 'http://192.168.0.100:5000/api/v1/Search/movie/' + args,
+        uri: 'http://request.franken-tech.com/api/v1/Search/movie/' + args,
         method: 'GET'
     }, function (err, res, body) {
         var movie = JSON.parse(body);
@@ -150,7 +150,7 @@ function checkTV(message, args) {
         headers: {
             'ApiKey': ombi
         },
-        uri: 'http://192.168.0.100:5000/api/v1/Search/tv/' + args,
+        uri: 'http://request.franken-tech.com/api/v1/Search/tv/' + args,
         method: 'GET'
     }, function (err, res, body) {
         var show = JSON.parse(body);
@@ -187,7 +187,7 @@ function tvPassID(message, TVID) {
         headers: {
             'ApiKey': ombi
         },
-        uri: 'http://192.168.0.100:5000/api/v1/Search/tv/info/' + TVID,
+        uri: 'http://request.franken-tech.com/api/v1/Search/tv/info/' + TVID,
         method: 'GET'
     }, function (err, res, body) {
         var newShow = JSON.parse(body);
