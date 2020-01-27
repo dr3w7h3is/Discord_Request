@@ -17,6 +17,6 @@ Install packages
 >npm install
 
 ## Running the applications
->node index.js
+>node app.js
 
 ## Setup with Discord
